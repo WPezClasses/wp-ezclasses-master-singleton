@@ -1,6 +1,6 @@
 <?php
 /**
- * Base / parent boilerplate class for WP ezClasses. Can also be used as a base for WP plugins.
+ * Base / parent boilerplate class for WPezClasses. Can also be used as a base for WPezPlugins.
  *
  */
  
@@ -10,7 +10,7 @@
  */
  
 // No WP? Die! Now!!
-if (!defined('ABSPATH')) {
+if ( ! defined('ABSPATH') ) {
 	header( 'HTTP/1.0 403 Forbidden' );
     die();
 }
@@ -33,15 +33,15 @@ if ( ! class_exists('Class_WP_ezClasses_Master_Singleton') ){
 		/*
 		 * More info: http://scotty-t.com/2012/07/09/wp-you-oop/
 		 */
-		public static function ezc_get_instance($mix_args = NULL) {
+		public static function ez_new($mix_args = NULL) {
 		
 			$str_get_called_class = get_called_class();
 				
-			if ( !isset( self::$arr_instance[$str_get_called_class] ) ) {
+			if ( ! isset( self::$arr_instance[$str_get_called_class] ) ) {
 				self::$arr_instance[$str_get_called_class] = new $str_get_called_class();
 				
 				// note: the mix_args passed in are passed again
-				self::$arr_instance[$str_get_called_class]->ezc_init($mix_args);  
+				self::$arr_instance[$str_get_called_class]->ez__construct($mix_args);  
 			}
 			
 			return self::$arr_instance[$str_get_called_class];
@@ -51,11 +51,11 @@ if ( ! class_exists('Class_WP_ezClasses_Master_Singleton') ){
 		/*
 		 * Note: Only called the first time the class/object is instantiated. (Duh?)
 		 */
-		abstract public function ezc_init();  
+		abstract public function ez__construct();  
 
 
 		/*
-		 * Fact: Traditional GLOBALS are subject to abuse. The ezCONFIGS method allows you to maintain safe, read-only "GLOBALS" for any class that extends this one. 
+		 * Fact: Traditional GLOBALS are subject to abuse. The ezCONFIGS method allows you to maintain safe, read-only "GLOBALS" for any class that extends Class_WP_ezClasses_Master_Singleton. 
 		 *
 		 * You can pass in a string, or an array of values that will be implode'd into the ezCONFIG's key. For example, array(some_key, blog_id, called_class)
 		 *
@@ -82,6 +82,11 @@ if ( ! class_exists('Class_WP_ezClasses_Master_Singleton') ){
 				$arr_keys = array($mix_keys, $this->_int_get_current_blog_id, $this->_str_get_called_class);
 
 			} 
+			/*
+			 * So far...the key requested can be a string, or an array that we make into a string. 
+			 *
+			 * Now we're going to take that key and get a value for it. 
+			 */ 
 			
 			/*
 			 * Once we have an array, we start with a key of all array value build with implode and then check that key against the ez_globals(). If the
@@ -116,7 +121,7 @@ if ( ! class_exists('Class_WP_ezClasses_Master_Singleton') ){
 			$arr_ez_configs = array(
 								'log'			=> true,
 								'validate'		=> true,
-								'filters'		=> false,
+								'filters'		=> true,
 								);
 								
 			return array_merge($arr_ez_configs, $this->ez_configs_custom());
